@@ -5,6 +5,8 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import CategoryFilter from "@/components/CategoryFilter";
 import ReportFeed from "@/components/ReportFeed";
+import AdBanner from "@/components/AdBanner";
+import Footer from "@/components/Footer";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
@@ -110,6 +112,9 @@ export default function HomePage() {
           <CategoryFilter active={activeCategory} onChange={setActiveCategory} />
         </div>
 
+        {/* Top Ad Banner */}
+        <AdBanner />
+
         {/* Map */}
         <div className="mb-8">
           <h2
@@ -120,6 +125,9 @@ export default function HomePage() {
           </h2>
           <ReportMap reports={reports} activeCategory={activeCategory} />
         </div>
+
+        {/* Middle Ad Banner */}
+        <AdBanner />
 
         {/* Feed */}
         <div>
@@ -140,21 +148,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer
-        className="mt-16 py-8 text-center text-sm"
-        style={{ background: "var(--navy)", color: "rgba(255,255,255,0.6)" }}
-      >
-        <div className="max-w-6xl mx-auto px-4">
-          <p className="font-bold text-white mb-1" style={{ fontFamily: "Merriweather, serif" }}>
-            ★ LocalWatch
-          </p>
-          <p>Community-powered neighborhood awareness.</p>
-          <p className="mt-2 text-xs opacity-60">
-            Do not post personal information, names, or accusations. Report what you observed.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 }
