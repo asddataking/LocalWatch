@@ -2,23 +2,25 @@
 
 export const CATEGORIES = [
   { label: "All", value: "all", color: "#0D1B3E" },
-  { label: "Crime", value: "Crime", color: "#C8102E" },
-  { label: "Suspicious Activity", value: "Suspicious Activity", color: "#E07B00" },
-  { label: "Missing Pet", value: "Missing Pet", color: "#7B2D8B" },
+  { label: "Public Safety", value: "Public Safety", color: "#C8102E" },
+  { label: "Fire & EMS", value: "Fire & EMS", color: "#E03C31" },
   { label: "Traffic", value: "Traffic", color: "#D4A200" },
-  { label: "Hazard", value: "Hazard", color: "#D45500" },
+  { label: "Lost & Found Pets", value: "Lost & Found Pets", color: "#7B2D8B" },
+  { label: "Power Outages", value: "Power Outages", color: "#666666" },
   { label: "Weather", value: "Weather", color: "#0077CC" },
-  { label: "Scam Alert", value: "Scam Alert", color: "#009688" },
+  { label: "School Alerts", value: "School Alerts", color: "#009688" },
+  { label: "Community Alerts", value: "Community Alerts", color: "#E07B00" },
 ];
 
 export const CATEGORY_ICONS: Record<string, string> = {
-  "Crime": "🚨",
-  "Suspicious Activity": "👁️",
-  "Missing Pet": "🐾",
-  "Traffic": "🚗",
-  "Hazard": "⚠️",
-  "Weather": "🌩️",
-  "Scam Alert": "🛡️",
+  "Public Safety": "🚓",
+  "Fire & EMS": "🚒",
+  "Traffic": "🚧",
+  "Lost & Found Pets": "🐕",
+  "Power Outages": "⚡",
+  "Weather": "🌪",
+  "School Alerts": "🏫",
+  "Community Alerts": "📢",
 };
 
 interface CategoryFilterProps {

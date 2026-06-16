@@ -4,21 +4,36 @@ import { useState, useRef } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
+import { getFingerprintId } from "@/app/utils/fingerprint";
+import { useQuery } from "convex/react";
 
 const CATEGORIES = [
-  "Crime",
-  "Suspicious Activity",
-  "Missing Pet",
+  "Public Safety",
+  "Fire & EMS",
   "Traffic",
-  "Hazard",
+  "Lost & Found Pets",
+  "Power Outages",
   "Weather",
-  "Scam Alert",
+  "School Alerts",
+  "Community Alerts",
 ];
 
 export default function SubmitForm() {
   const router = useRouter();
   const createReport = useMutation(api.reports.createReport);
   const generateUploadUrl = useMutation(api.reports.generateUploadUrl);
+
+  const [regionSlug, setRegionSlug] = useState("metro-detroit");
+  const [fingerprintId, setFingerprintId] = useState("");
+
+  if (typeof window !== "undefined" && !fingerprintId) {
+    setFingerprintId(getFingerprintId());
+    const saved = localStorage.getItem("localwatch_region");
+    if (saved) setRegionSlug(saved);
+  }
+
+  const region = useQuery(api.regions.getRegionBySlug, { slug: regionSlug });
+  const user = useQuery(api.users.getUser, fingerprintId ? { fingerprintId } : "skip");
 
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
@@ -78,6 +93,11 @@ export default function SubmitForm() {
       return;
     }
 
+    if (!region || !user) {
+      setError("Missing region or user data. Please try again.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       let photoStorageId: string | undefined;
@@ -95,6 +115,8 @@ export default function SubmitForm() {
       }
 
       await createReport({
+        regionId: region._id,
+        userId: user._id,
         category,
         title,
         description,
@@ -189,12 +211,12 @@ export default function SubmitForm() {
           onChange={(e) => setDescription(e.target.value)}
           required
           rows={4}
-          maxLength={1000}
+          maxLength={200}
           className={inputCls}
           style={{ ...inputStyle, resize: "vertical" }}
         />
         <p className="text-xs mt-1" style={{ color: "var(--gray-500)" }}>
-          {description.length}/1000 characters
+          {description.length}/200 characters
         </p>
       </div>
 

@@ -10,8 +10,10 @@
 
 import type * as cleanup from "../cleanup.js";
 import type * as crons from "../crons.js";
+import type * as regions from "../regions.js";
 import type * as reports from "../reports.js";
 import type * as seed from "../seed.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -22,8 +24,10 @@ import type {
 declare const fullApi: ApiFromModules<{
   cleanup: typeof cleanup;
   crons: typeof crons;
+  regions: typeof regions;
   reports: typeof reports;
   seed: typeof seed;
+  users: typeof users;
 }>;
 
 /**

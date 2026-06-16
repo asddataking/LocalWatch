@@ -7,8 +7,13 @@ import CategoryFilter from "@/components/CategoryFilter";
 import ReportFeed from "@/components/ReportFeed";
 import AdBanner from "@/components/AdBanner";
 import Footer from "@/components/Footer";
+import LocationDetector from "@/components/LocationDetector";
+import RegionDirectory from "@/components/RegionDirectory";
+import NewsletterCTA from "@/components/NewsletterCTA";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 const ReportMap = dynamic(() => import("@/components/ReportMap"), {
   ssr: false,
@@ -27,15 +32,20 @@ const ReportMap = dynamic(() => import("@/components/ReportMap"), {
   ),
 });
 
-export default function HomePage() {
+function HomeContent() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const reports = useQuery(api.reports.getReports) ?? [];
+  const searchParams = useSearchParams();
+  const currentRegionSlug = searchParams.get("region");
+
+  const region = useQuery(api.regions.getRegionBySlug, currentRegionSlug ? { slug: currentRegionSlug } : "skip");
+  const reports = useQuery(api.reports.getReportsByRegion, region ? { regionId: region._id } : "skip") ?? [];
 
   const totalReports = reports.length;
   const uniqueLocations = new Set(reports.map((r) => r.locationText)).size;
 
   return (
     <>
+      <LocationDetector />
       {/* Hero section */}
       <section
         style={{
@@ -58,10 +68,12 @@ export default function HomePage() {
               style={{ fontFamily: "Merriweather, serif" }}
             >
               Know What&apos;s Happening{" "}
-              <span style={{ color: "var(--gold)" }}>In Your Neighborhood.</span>
+              <span style={{ color: "var(--gold)" }}>
+                {region ? `In ${region.name}.` : "In Your Neighborhood."}
+              </span>
             </h1>
             <p className="text-lg md:text-xl mb-8 opacity-90 leading-relaxed">
-              Community-powered neighborhood awareness. Submit and confirm local
+              Community-powered awareness for {region ? region.name : "your area"}. Submit and confirm local
               reports — no login required.
             </p>
 
@@ -129,6 +141,9 @@ export default function HomePage() {
         {/* Middle Ad Banner */}
         <AdBanner />
 
+        {/* Newsletter CTA */}
+        <NewsletterCTA region={region || null} />
+
         {/* Feed */}
         <div>
           <div className="flex items-center justify-between mb-4">
@@ -148,7 +163,16 @@ export default function HomePage() {
         </div>
       </div>
 
+      <RegionDirectory />
       <Footer />
     </>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading LocalWatch...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }
