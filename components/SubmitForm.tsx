@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
-import { getFingerprintId } from "@/app/utils/fingerprint";
 import { useQuery } from "convex/react";
+import { useAuth } from "@clerk/nextjs";
+import { useLocalWatchUser } from "@/hooks/useLocalWatchUser";
 
 const CATEGORIES = [
   "Public Safety",
@@ -20,20 +22,19 @@ const CATEGORIES = [
 
 export default function SubmitForm() {
   const router = useRouter();
+  const { isSignedIn } = useAuth();
+  const { user, ready: userReady, isRegistered } = useLocalWatchUser();
   const createReport = useMutation(api.reports.createReport);
   const generateUploadUrl = useMutation(api.reports.generateUploadUrl);
 
   const [regionSlug, setRegionSlug] = useState("metro-detroit");
-  const [fingerprintId, setFingerprintId] = useState("");
 
-  if (typeof window !== "undefined" && !fingerprintId) {
-    setFingerprintId(getFingerprintId());
+  useEffect(() => {
     const saved = localStorage.getItem("localwatch_region");
     if (saved) setRegionSlug(saved);
-  }
+  }, []);
 
   const region = useQuery(api.regions.getRegionBySlug, { slug: regionSlug });
-  const user = useQuery(api.users.getUser, fingerprintId ? { fingerprintId } : "skip");
 
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
@@ -41,7 +42,7 @@ export default function SubmitForm() {
   const [locationText, setLocationText] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [anonymous, setAnonymous] = useState(false);
+  const [anonymous, setAnonymous] = useState(true);
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -93,7 +94,7 @@ export default function SubmitForm() {
       return;
     }
 
-    if (!region || !user) {
+    if (!region || !user || !userReady) {
       setError("Missing region or user data. Please try again.");
       return;
     }
@@ -147,6 +148,36 @@ export default function SubmitForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {/* Anonymous-first notice */}
+      <div
+        className="rounded-xl p-4 border text-sm leading-relaxed"
+        style={{
+          background: "#F0F4FF",
+          borderColor: "#0D1B3E22",
+          color: "var(--navy)",
+        }}
+      >
+        <p className="font-bold mb-1">No account required</p>
+        <p className="mb-0">
+          You can submit anonymously right now.{" "}
+          {!isSignedIn ? (
+            <>
+              Want to build neighborhood trust over time?{" "}
+              <Link href="/sign-up" className="font-bold underline" style={{ color: "var(--red)" }}>
+                Create a free account
+              </Link>{" "}
+              — totally optional.
+            </>
+          ) : (
+            <>
+              Signed in as <strong>{user?.displayName ?? "Community Member"}</strong>
+              {user?.trustScoreLevel ? ` · ${user.trustScoreLevel}` : ""}.
+              Reports stay anonymous unless you opt out below.
+            </>
+          )}
+        </p>
+      </div>
+
       {/* Moderation warning */}
       <div
         className="rounded-xl p-4 border-l-4 text-sm leading-relaxed"
@@ -358,7 +389,9 @@ export default function SubmitForm() {
             Submit anonymously
           </p>
           <p className="text-xs mt-0.5" style={{ color: "var(--gray-500)" }}>
-            Your name will not be attached to this report.
+            {isRegistered && !anonymous
+              ? "Your display name may be shown as a registered community member."
+              : "Your name will not be attached to this report."}
           </p>
         </label>
       </div>

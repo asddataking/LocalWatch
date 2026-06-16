@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { UserButton, useAuth } from "@clerk/nextjs";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { isLoaded, isSignedIn } = useAuth();
 
   return (
     <header
@@ -47,6 +49,37 @@ export default function Header() {
             >
               Feed & Map
             </Link>
+            {isLoaded && !isSignedIn && (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="text-sm font-semibold no-underline transition-colors hover:text-white"
+                  style={{ color: "rgba(255,255,255,0.8)" }}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="px-4 py-2 rounded-lg text-sm font-bold transition-all hover:scale-105 active:scale-95 border"
+                  style={{
+                    borderColor: "rgba(255,255,255,0.35)",
+                    color: "var(--white)",
+                    textDecoration: "none",
+                  }}
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+            {isLoaded && isSignedIn && (
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-9 h-9",
+                  },
+                }}
+              />
+            )}
             <Link
               href="/submit"
               className="px-5 py-2 rounded-lg text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-md"
@@ -81,6 +114,38 @@ export default function Header() {
             >
               📋 Feed & Map
             </Link>
+            {isLoaded && !isSignedIn && (
+              <>
+                <Link
+                  href="/sign-in"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-sm font-semibold no-underline py-2"
+                  style={{ color: "rgba(255,255,255,0.85)" }}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/sign-up"
+                  onClick={() => setMenuOpen(false)}
+                  className="text-center px-5 py-3 rounded-lg text-sm font-bold border"
+                  style={{
+                    borderColor: "rgba(255,255,255,0.35)",
+                    color: "var(--white)",
+                    textDecoration: "none",
+                  }}
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+            {isLoaded && isSignedIn && (
+              <div className="flex items-center gap-3 py-2">
+                <UserButton />
+                <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.85)" }}>
+                  Account
+                </span>
+              </div>
+            )}
             <Link
               href="/submit"
               onClick={() => setMenuOpen(false)}

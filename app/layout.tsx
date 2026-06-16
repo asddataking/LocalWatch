@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import Header from "@/components/Header";
@@ -41,10 +43,13 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body>
-        <ConvexClientProvider>
-          <Header />
-          <main>{children}</main>
-        </ConvexClientProvider>
+        <ClerkProvider afterSignOutUrl="/">
+          <ConvexClientProvider>
+            <Header />
+            <main>{children}</main>
+          </ConvexClientProvider>
+          <Analytics />
+        </ClerkProvider>
       </body>
     </html>
   );

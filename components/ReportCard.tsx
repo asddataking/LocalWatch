@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { CATEGORY_COLORS, CATEGORY_ICONS } from "./CategoryFilter";
-import { getFingerprintId } from "@/app/utils/fingerprint";
 import { getStatusDisplay } from "@/app/utils/reportStatus";
+import { useLocalWatchUser } from "@/hooks/useLocalWatchUser";
 
 function timeAgo(ts: number): string {
   const diff = Date.now() - ts;
@@ -49,29 +49,21 @@ interface ReportCardProps {
 
 export default function ReportCard({ report, index = 0 }: ReportCardProps) {
   const interact = useMutation(api.reports.interactWithReport);
-  const getOrCreateUser = useMutation(api.users.getOrCreateUser);
-  const [fingerprintId, setFingerprintId] = useState("");
+  const { user, ready } = useLocalWatchUser();
   const [interacting, setInteracting] = useState(false);
   const [interactionError, setInteractionError] = useState("");
-
-  useEffect(() => {
-    setFingerprintId(getFingerprintId());
-  }, []);
 
   const color = CATEGORY_COLORS[report.category] ?? "#0D1B3E";
   const icon = CATEGORY_ICONS[report.category] ?? "📋";
   const abuseCount = report.abuseReports ?? report.disputes ?? 0;
 
   async function handleInteraction(type: "confirm" | "abuse") {
-    if (!fingerprintId || interacting) return;
+    if (!user || !ready || interacting) return;
 
     setInteracting(true);
     setInteractionError("");
 
     try {
-      const user = await getOrCreateUser({ fingerprintId });
-      if (!user) throw new Error("Could not identify user");
-
       await interact({
         reportId: report._id,
         userId: user._id,

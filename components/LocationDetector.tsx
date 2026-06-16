@@ -22,16 +22,13 @@ export default function LocationDetector() {
   
   const nearestRegion = useQuery(api.regions.findNearestRegion, coords ? { lat: coords.lat, lng: coords.lng } : "skip");
   
-  const getOrCreateUser = useMutation(api.users.getOrCreateUser);
+  const ensureUser = useMutation(api.users.ensureUser);
 
   useEffect(() => {
-    // 1. Ensure user exists (invisible login)
     const fingerprintId = getFingerprintId();
     if (fingerprintId) {
-      getOrCreateUser({ fingerprintId }).catch(console.error);
+      ensureUser({ fingerprintId }).catch(console.error);
     }
-
-    // 2. Location logic
     if (currentRegionParam) {
       // User explicitly requested a region, save it as their preference
       localStorage.setItem("localwatch_region", currentRegionParam);
@@ -62,7 +59,7 @@ export default function LocationDetector() {
     } else {
       router.replace(`/?region=metro-detroit`);
     }
-  }, [currentRegionParam, router, getOrCreateUser]);
+  }, [currentRegionParam, router, ensureUser]);
 
   useEffect(() => {
     if (nearestRegion) {

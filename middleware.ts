@@ -7,7 +7,8 @@ export default clerkMiddleware(async (auth, req) => {
 });
 
 export const config = {
-  // Only run Clerk middleware on admin routes so the public site works
-  // without Clerk env vars configured in Vercel.
-  matcher: ['/admin(.*)'],
+  matcher: [
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/(api|trpc)(.*)",
+  ],
 };

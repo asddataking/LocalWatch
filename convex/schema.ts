@@ -13,11 +13,16 @@ export default defineSchema({
 
   users: defineTable({
     fingerprintId: v.string(), // Anonymous device ID
+    clerkId: v.optional(v.string()), // Linked Clerk account
+    displayName: v.optional(v.string()),
+    email: v.optional(v.string()),
     role: v.string(), // 'user' or 'admin'
-    trustScoreLevel: v.string(), // 'New User', 'Community Spotter', 'Trusted Reporter', 'Verified Contributor'
+    trustScoreLevel: v.string(), // 'New User', 'Community Member', 'Community Spotter', 'Trusted Reporter', 'Verified Contributor'
     totalReports: v.number(),
     createdAt: v.number(),
-  }).index("by_fingerprint", ["fingerprintId"]),
+  })
+    .index("by_fingerprint", ["fingerprintId"])
+    .index("by_clerk", ["clerkId"]),
 
   reports: defineTable({
     regionId: v.optional(v.id("regions")),
