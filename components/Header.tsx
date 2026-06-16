@@ -14,9 +14,7 @@ export default function Header() {
       className="sticky top-0 z-50 shadow-lg"
     >
       <div className="max-w-6xl mx-auto px-4 py-0">
-        {/* Top bar */}
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group no-underline">
             <div
               className="w-10 h-10 rounded-lg flex items-center justify-center text-xl font-black shadow-inner flex-shrink-0"
@@ -40,14 +38,20 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-4">
             <Link
-              href="/"
-              className="text-sm font-semibold no-underline transition-colors"
+              href="/#map"
+              className="text-sm font-semibold no-underline transition-colors hover:text-white"
               style={{ color: "rgba(255,255,255,0.8)" }}
             >
-              Feed & Map
+              Alerts
+            </Link>
+            <Link
+              href="#"
+              className="text-sm font-semibold no-underline transition-colors hover:text-white"
+              style={{ color: "rgba(255,255,255,0.8)" }}
+            >
+              About
             </Link>
             {isLoaded && !isSignedIn && (
               <>
@@ -93,7 +97,6 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* Mobile hamburger */}
           <button
             className="md:hidden text-white text-2xl p-2 rounded focus:outline-none"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -103,16 +106,23 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden pb-4 flex flex-col gap-3 border-t border-white/10 pt-3">
             <Link
-              href="/"
+              href="/#map"
               onClick={() => setMenuOpen(false)}
               className="text-sm font-semibold no-underline py-2"
               style={{ color: "rgba(255,255,255,0.85)" }}
             >
-              📋 Feed & Map
+              📍 Alerts
+            </Link>
+            <Link
+              href="#"
+              onClick={() => setMenuOpen(false)}
+              className="text-sm font-semibold no-underline py-2"
+              style={{ color: "rgba(255,255,255,0.85)" }}
+            >
+              About
             </Link>
             {isLoaded && !isSignedIn && (
               <>
@@ -162,7 +172,6 @@ export default function Header() {
         )}
       </div>
 
-      {/* Patriotic stripe */}
       <div
         style={{
           height: "4px",
