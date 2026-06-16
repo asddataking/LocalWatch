@@ -21,7 +21,7 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-black text-[var(--navy)]" style={{ fontFamily: "Merriweather, serif" }}>Admin Dashboard</h1>
           <p className="text-gray-500">Welcome back, {user.firstName || "Admin"}</p>
         </div>
-        <UserButton afterSignOutUrl="/" />
+        <UserButton />
       </div>
 
       <div className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">

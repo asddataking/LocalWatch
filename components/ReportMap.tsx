@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Doc } from "@/convex/_generated/dataModel";
+import { getStatusDisplay } from "@/app/utils/reportStatus";
 
 const CATEGORY_COLORS: Record<string, string> = {
   "Public Safety": "#C8102E",
@@ -72,7 +73,6 @@ export default function ReportMap({ reports, activeCategory, region }: ReportMap
       }).addTo(map);
 
       // Create Cluster Group
-      // @ts-expect-error L.markerClusterGroup is injected
       const clusterGroup = L.markerClusterGroup({
         chunkedLoading: true,
         showCoverageOnHover: false,
@@ -85,7 +85,6 @@ export default function ReportMap({ reports, activeCategory, region }: ReportMap
           });
         }
       });
-      map.addTo(map); // wait, map is already there
       map.addLayer(clusterGroup);
 
       mapInstanceRef.current = map;
@@ -132,7 +131,7 @@ export default function ReportMap({ reports, activeCategory, region }: ReportMap
                 ${report.description.slice(0, 140)}${report.description.length > 140 ? "…" : ""}
               </div>
               <div style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;background:#E9ECEF;color:#495057">
-                ${report.status}
+                ${getStatusDisplay(report.status).icon} ${getStatusDisplay(report.status).label}
               </div>
             </div>`,
             { maxWidth: 280 }

@@ -14,6 +14,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { isVerifiedStatus } from "@/app/utils/reportStatus";
 
 const ReportMap = dynamic(() => import("@/components/ReportMap"), {
   ssr: false,
@@ -93,7 +94,7 @@ function HomeContent() {
               </div>
               <div>
                 <div className="text-3xl font-black" style={{ color: "var(--gold)" }}>
-                  {reports.filter((r) => r.status === "Multiple Witnesses").length}
+                  {reports.filter((r) => isVerifiedStatus(r.status)).length}
                 </div>
                 <div className="text-xs opacity-70 uppercase tracking-wide">Verified</div>
               </div>
@@ -135,7 +136,7 @@ function HomeContent() {
           >
             📍 Reports Near You
           </h2>
-          <ReportMap reports={reports} activeCategory={activeCategory} />
+          <ReportMap reports={reports} activeCategory={activeCategory} region={region} />
         </div>
 
         {/* Middle Ad Banner */}

@@ -12,6 +12,10 @@ export const CATEGORIES = [
   { label: "Community Alerts", value: "Community Alerts", color: "#E07B00" },
 ];
 
+export const CATEGORY_COLORS: Record<string, string> = Object.fromEntries(
+  CATEGORIES.filter((c) => c.value !== "all").map((c) => [c.value, c.color])
+);
+
 export const CATEGORY_ICONS: Record<string, string> = {
   "Public Safety": "🚓",
   "Fire & EMS": "🚒",

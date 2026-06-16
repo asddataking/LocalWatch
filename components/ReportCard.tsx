@@ -1,19 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
-import { CATEGORY_ICONS } from "./CategoryFilter";
-
-const CATEGORY_COLORS: Record<string, string> = {
-  "Crime": "#C8102E",
-  "Suspicious Activity": "#E07B00",
-  "Missing Pet": "#7B2D8B",
-  "Traffic": "#D4A200",
-  "Hazard": "#D45500",
-  "Weather": "#0077CC",
-  "Scam Alert": "#009688",
-};
+import { CATEGORY_COLORS, CATEGORY_ICONS } from "./CategoryFilter";
+import { getFingerprintId } from "@/app/utils/fingerprint";
+import { getStatusDisplay } from "@/app/utils/reportStatus";
 
 function timeAgo(ts: number): string {
   const diff = Date.now() - ts;
@@ -27,17 +20,12 @@ function timeAgo(ts: number): string {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { cls: string; icon: string }> = {
-    "Community Reported": { cls: "status-reported", icon: "📢" },
-    "Multiple Witnesses": { cls: "status-witnesses", icon: "👥" },
-    "Needs Review": { cls: "status-review", icon: "🔍" },
-  };
-  const entry = map[status] ?? { cls: "status-reported", icon: "📢" };
+  const { label, cls, icon } = getStatusDisplay(status);
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${entry.cls}`}
+      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${cls}`}
     >
-      {entry.icon} {status}
+      {icon} {label}
     </span>
   );
 }
@@ -60,10 +48,43 @@ interface ReportCardProps {
 }
 
 export default function ReportCard({ report, index = 0 }: ReportCardProps) {
-  const confirm = useMutation(api.reports.confirmReport);
-  const dispute = useMutation(api.reports.disputeReport);
+  const interact = useMutation(api.reports.interactWithReport);
+  const getOrCreateUser = useMutation(api.users.getOrCreateUser);
+  const [fingerprintId, setFingerprintId] = useState("");
+  const [interacting, setInteracting] = useState(false);
+  const [interactionError, setInteractionError] = useState("");
+
+  useEffect(() => {
+    setFingerprintId(getFingerprintId());
+  }, []);
+
   const color = CATEGORY_COLORS[report.category] ?? "#0D1B3E";
   const icon = CATEGORY_ICONS[report.category] ?? "📋";
+  const abuseCount = report.abuseReports ?? report.disputes ?? 0;
+
+  async function handleInteraction(type: "confirm" | "abuse") {
+    if (!fingerprintId || interacting) return;
+
+    setInteracting(true);
+    setInteractionError("");
+
+    try {
+      const user = await getOrCreateUser({ fingerprintId });
+      if (!user) throw new Error("Could not identify user");
+
+      await interact({
+        reportId: report._id,
+        userId: user._id,
+        type,
+      });
+    } catch (err) {
+      setInteractionError(
+        err instanceof Error ? err.message : "Could not submit interaction"
+      );
+    } finally {
+      setInteracting(false);
+    }
+  }
 
   return (
     <div
@@ -125,10 +146,11 @@ export default function ReportCard({ report, index = 0 }: ReportCardProps) {
       )}
 
       {/* Action buttons */}
-      <div className="flex items-center gap-3 mt-4 pt-3 border-t" style={{ borderColor: "var(--gray-200)" }}>
+      <div className="flex flex-wrap items-center gap-3 mt-4 pt-3 border-t" style={{ borderColor: "var(--gray-200)" }}>
         <button
-          onClick={() => confirm({ id: report._id })}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all hover:scale-105 active:scale-95"
+          onClick={() => handleInteraction("confirm")}
+          disabled={interacting}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
           style={{
             background: "#0D1B3E12",
             color: "var(--navy)",
@@ -142,21 +164,27 @@ export default function ReportCard({ report, index = 0 }: ReportCardProps) {
           </span>
         </button>
         <button
-          onClick={() => dispute({ id: report._id })}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all hover:scale-105 active:scale-95"
+          onClick={() => handleInteraction("abuse")}
+          disabled={interacting}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
           style={{
             background: "#C8102E10",
             color: "var(--red)",
             border: "1px solid #C8102E22",
           }}
-          title="Dispute this report"
+          title="Report this as inaccurate or abusive"
         >
-          ✗ Dispute
+          ✗ Report Abuse
           <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: "var(--red)", color: "white" }}>
-            {report.disputes}
+            {abuseCount}
           </span>
         </button>
       </div>
+      {interactionError && (
+        <p className="text-xs mt-2" style={{ color: "var(--red)" }}>
+          {interactionError}
+        </p>
+      )}
     </div>
   );
 }

@@ -99,7 +99,8 @@ export const interactWithReport = mutation({
     if (!report) throw new Error("Report not found");
 
     const confirmations = type === "confirm" ? report.confirmations + 1 : report.confirmations;
-    const abuseReports = type === "abuse" ? report.abuseReports + 1 : report.abuseReports;
+    const currentAbuse = report.abuseReports ?? report.disputes ?? 0;
+    const abuseReports = type === "abuse" ? currentAbuse + 1 : currentAbuse;
     
     const status = computeStatus(confirmations, abuseReports);
     await ctx.db.patch(reportId, { confirmations, abuseReports, status });
