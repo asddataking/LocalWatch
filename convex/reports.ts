@@ -10,10 +10,11 @@ function computeStatus(confirmations: number, disputes: number): string {
 export const getReports = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db
+    const all = await ctx.db
       .query("reports")
       .order("desc")
       .collect();
+    return all.filter((r) => r.isSpam !== true);
   },
 });
 

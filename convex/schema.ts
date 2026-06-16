@@ -15,5 +15,6 @@ export default defineSchema({
     confirmations: v.number(),
     disputes: v.number(),
     createdAt: v.number(),
+    isSpam: v.optional(v.boolean()),
   }),
 });
