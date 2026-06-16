@@ -4,30 +4,62 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import Header from "@/components/Header";
+import JsonLd from "@/components/JsonLd";
+import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "LocalWatch — Community-powered neighborhood awareness",
-  description:
-    "LocalWatch helps your community share and track local safety reports on an interactive map. Submit reports, confirm sightings, and stay informed about your neighborhood.",
-  keywords: ["neighborhood watch", "community safety", "local reports", "neighborhood awareness", "crime map", "local hazards"],
-  authors: [{ name: "LocalWatch Community" }],
-  creator: "LocalWatch",
+  metadataBase: new URL(siteConfig.url),
+  title: {
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  keywords: [...siteConfig.keywords],
+  authors: [{ name: siteConfig.name, url: siteConfig.url }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
+  applicationName: siteConfig.name,
+  category: "community safety",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "LocalWatch — Know What's Happening In Your Neighborhood",
-    description: "Community-powered neighborhood awareness. View local safety reports on an interactive map and feed.",
-    url: "https://local-watch-ashen.vercel.app",
-    siteName: "LocalWatch",
-    locale: "en_US",
     type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1024,
+        height: 1024,
+        alt: siteConfig.ogImageAlt,
+        type: "image/jpeg",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "LocalWatch — Neighborhood Awareness",
-    description: "Submit reports, confirm sightings, and stay informed about your neighborhood.",
+    title: siteConfig.title,
+    description: siteConfig.tagline,
+    images: [siteConfig.ogImage],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  icons: {
+    icon: "/localwatch-social-share.jpg",
+    apple: "/localwatch-social-share.jpg",
   },
 };
 
@@ -43,6 +75,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body>
+        <JsonLd />
         <ClerkProvider afterSignOutUrl="/">
           <ConvexClientProvider>
             <Header />

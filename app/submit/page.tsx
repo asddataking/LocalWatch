@@ -1,11 +1,28 @@
 import type { Metadata } from "next";
 import SubmitForm from "@/components/SubmitForm";
 import Link from "next/link";
+import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Submit a Report — LocalWatch",
+  title: "Submit a Report",
   description:
-    "Submit a local safety or awareness report to LocalWatch. Help your neighbors stay informed.",
+    "Submit a free, anonymous local safety report to LocalWatch. Share public safety, traffic, weather, or lost pet sightings with your neighbors.",
+  alternates: {
+    canonical: "/submit",
+  },
+  openGraph: {
+    title: `Submit a Report | ${siteConfig.name}`,
+    description:
+      "Report what you see in your neighborhood. No login required — submit anonymously or create a free account.",
+    url: "/submit",
+    images: [siteConfig.ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Submit a Report | ${siteConfig.name}`,
+    description: "Help your neighbors stay informed. Submit a local report in minutes.",
+    images: [siteConfig.ogImage],
+  },
 };
 
 export default function SubmitPage() {

@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { SignUp } from "@clerk/nextjs";
 import { clerkAppearance } from "@/lib/clerkAppearance";
+
+export const metadata: Metadata = {
+  title: "Sign Up",
+  robots: { index: false, follow: false },
+};
 
 export default function SignUpPage() {
   return (

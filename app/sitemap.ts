@@ -1,21 +1,30 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // Replace this base URL with your actual domain when you add a custom domain
-  const baseUrl = 'https://local-watch-ashen.vercel.app';
+  const now = new Date();
 
-  return [
+  const staticPages: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: 'always',
+      url: absoluteUrl("/"),
+      lastModified: now,
+      changeFrequency: "hourly",
       priority: 1,
     },
     {
-      url: `${baseUrl}/submit`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
+      url: absoluteUrl("/submit"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
     },
   ];
+
+  const regionPages: MetadataRoute.Sitemap = siteConfig.regions.map((region) => ({
+    url: absoluteUrl(`/?region=${region.slug}`),
+    lastModified: now,
+    changeFrequency: "hourly" as const,
+    priority: 0.85,
+  }));
+
+  return [...staticPages, ...regionPages];
 }
