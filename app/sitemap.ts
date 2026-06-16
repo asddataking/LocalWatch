@@ -23,6 +23,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: absoluteUrl("/work-with-us"),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.65,
+    },
   ];
 
   const regionPages: MetadataRoute.Sitemap = siteConfig.regions.map((region) => ({

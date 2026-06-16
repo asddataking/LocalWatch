@@ -6,6 +6,8 @@ import { api } from "@/convex/_generated/api";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { Id } from "@/convex/_generated/dataModel";
 import { getStatusDisplay } from "@/app/utils/reportStatus";
+import RegionAdEditor from "@/components/admin/RegionAdEditor";
+import PartnerInquiriesPanel from "@/components/admin/PartnerInquiriesPanel";
 
 const CATEGORIES = [
   "All",
@@ -63,6 +65,7 @@ export default function AdminDashboard() {
   const { isLoaded, isSignedIn, user } = useUser();
   const stats = useQuery(api.admin.getDashboardStats);
   const activeUsers = useQuery(api.admin.getActiveUsers, { limit: 12 }) ?? [];
+  const adInventory = useQuery(api.ads.getRegionAdInventory) ?? [];
 
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -85,6 +88,10 @@ export default function AdminDashboard() {
   );
 
   const maxTimeline = Math.max(...(stats?.timeline.map((t) => t.count) ?? [1]), 1);
+  const maxRegionReports = Math.max(
+    ...(stats?.regionInsights?.map((r) => r.totalReports) ?? [1]),
+    1
+  );
 
   if (!isLoaded || !isSignedIn) {
     return (
@@ -152,6 +159,22 @@ export default function AdminDashboard() {
           />
         </section>
 
+        {(stats?.totals.newPartnerInquiries ?? 0) > 0 && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm font-semibold text-amber-900">
+              {stats?.totals.newPartnerInquiries} new Work with Us{" "}
+              {stats?.totals.newPartnerInquiries === 1 ? "inquiry" : "inquiries"} waiting for review
+            </p>
+            <a
+              href="#partner-inquiries"
+              className="text-sm font-bold no-underline"
+              style={{ color: "var(--navy)" }}
+            >
+              View inquiries →
+            </a>
+          </div>
+        )}
+
         <section className="grid lg:grid-cols-3 gap-6">
           {/* Activity chart */}
           <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -217,6 +240,140 @@ export default function AdminDashboard() {
             </div>
           </div>
         </section>
+
+        {/* Region performance */}
+        <section className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-bold" style={{ color: "var(--navy)" }}>
+              Region performance
+            </h2>
+            <p className="text-sm text-gray-500">
+              Which areas are getting the most reports — use this to prioritize outreach and ad inventory
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3">#</th>
+                  <th className="px-4 py-3">Region</th>
+                  <th className="px-4 py-3 text-right">Total</th>
+                  <th className="px-4 py-3 text-right">Today</th>
+                  <th className="px-4 py-3 text-right">This week</th>
+                  <th className="px-4 py-3 text-right">Last week</th>
+                  <th className="px-4 py-3 text-center">Trend</th>
+                  <th className="px-4 py-3 text-right">Share</th>
+                  <th className="px-4 py-3 text-right">Contributors</th>
+                  <th className="px-4 py-3">Volume</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {(stats?.regionInsights ?? []).length === 0 && (
+                  <tr>
+                    <td colSpan={10} className="px-4 py-8 text-center text-gray-400">
+                      No region data yet
+                    </td>
+                  </tr>
+                )}
+                {(stats?.regionInsights ?? []).map((row) => (
+                  <tr key={row.regionId} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-bold text-gray-400">{row.rank}</td>
+                    <td className="px-4 py-3">
+                      <p className="font-semibold text-gray-900">{row.name}</p>
+                      <a
+                        href={`/?region=${row.slug}`}
+                        className="text-xs no-underline"
+                        style={{ color: "var(--navy)" }}
+                      >
+                        View on site →
+                      </a>
+                    </td>
+                    <td className="px-4 py-3 text-right font-bold" style={{ color: "var(--navy)" }}>
+                      {row.totalReports}
+                    </td>
+                    <td className="px-4 py-3 text-right">{row.reportsToday}</td>
+                    <td className="px-4 py-3 text-right">{row.reportsThisWeek}</td>
+                    <td className="px-4 py-3 text-right text-gray-500">{row.reportsLastWeek}</td>
+                    <td className="px-4 py-3 text-center">
+                      {row.trend === "up" && <span title="Up vs last week">📈</span>}
+                      {row.trend === "down" && <span title="Down vs last week">📉</span>}
+                      {row.trend === "flat" && <span title="Flat vs last week">➡️</span>}
+                    </td>
+                    <td className="px-4 py-3 text-right">{row.shareOfReports}%</td>
+                    <td className="px-4 py-3 text-right">{row.uniqueContributors}</td>
+                    <td className="px-4 py-3 w-32">
+                      <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${Math.max(4, (row.totalReports / maxRegionReports) * 100)}%`,
+                            background: "var(--navy)",
+                          }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Ad inventory by region */}
+        <section className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-bold" style={{ color: "var(--navy)" }}>
+              Regional ad inventory
+            </h2>
+            <p className="text-sm text-gray-500">
+              Banner, sidebar, and feed slots per region — empty slots show &quot;Your Ad Here&quot; on the site
+            </p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 text-left text-xs font-bold uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3">Region</th>
+                  <th className="px-4 py-3">Banner</th>
+                  <th className="px-4 py-3">Sidebar</th>
+                  <th className="px-4 py-3">Feed</th>
+                  <th className="px-4 py-3 text-right">Reports</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {adInventory.map((region) => {
+                  const insight = stats?.regionInsights?.find((r) => r.regionId === region.regionId);
+                  return (
+                    <tr key={region.regionId} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 font-semibold text-gray-900">{region.regionName}</td>
+                      {region.slots.map((slot) => (
+                        <td key={slot.placement} className="px-4 py-3">
+                          {slot.filled ? (
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-800">
+                              ✓ {slot.sponsorName}
+                            </span>
+                          ) : (
+                            <span className="text-xs font-semibold px-2 py-1 rounded-full bg-amber-50 text-amber-800">
+                              Open
+                            </span>
+                          )}
+                        </td>
+                      ))}
+                      <td className="px-4 py-3 text-right font-bold" style={{ color: "var(--navy)" }}>
+                        {insight?.totalReports ?? "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <PartnerInquiriesPanel />
+
+        <RegionAdEditor />
 
         {/* Breakdowns */}
         <section className="grid md:grid-cols-3 gap-4">
@@ -458,6 +615,11 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-8">
           <StatCard label="Interactions" value={stats?.totals.interactions ?? "—"} hint="Confirms + abuse flags" />
           <StatCard label="Newsletter subs" value={stats?.totals.subscribers ?? "—"} />
+          <StatCard
+            label="Partner inquiries"
+            value={stats?.totals.partnerInquiries ?? "—"}
+            hint={`${stats?.totals.newPartnerInquiries ?? 0} new`}
+          />
           <StatCard label="Regions live" value={stats?.totals.regions ?? "—"} />
           <StatCard label="Abuse flags" value={stats?.activity.abuseFlags ?? "—"} hint="All time" accent="var(--red)" />
         </div>

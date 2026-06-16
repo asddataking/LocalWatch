@@ -12,6 +12,7 @@ import MapWorkspace from "@/components/home/MapWorkspace";
 import HomeSidebar from "@/components/home/HomeSidebar";
 import ReportStrip from "@/components/home/ReportStrip";
 import MobileReportFab from "@/components/home/MobileReportFab";
+import RegionAdSlot from "@/components/RegionAdSlot";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { computeHomeStats, filterReportsByTown } from "@/lib/homeStats";
@@ -32,6 +33,10 @@ function HomeContent() {
   const reports =
     useQuery(api.reports.getReportsByRegion, region ? { regionId: region._id } : "skip") ?? [];
   const communityStats = useQuery(api.admin.getPublicCommunityStats);
+  const regionAds = useQuery(
+    api.ads.getAdsForRegion,
+    region ? { regionId: region._id } : "skip"
+  );
 
   const filteredReports = filterReportsByTown(reports, activeTown);
   const stats = computeHomeStats(filteredReports);
@@ -54,6 +59,12 @@ function HomeContent() {
       />
 
       <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
+        <RegionAdSlot
+          ad={regionAds?.banner ?? null}
+          regionName={region?.name}
+          placement="banner"
+        />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2 min-w-0">
             <MapWorkspace
@@ -66,6 +77,7 @@ function HomeContent() {
               onSelectReport={handleSelectReport}
               viewMode={mapViewMode}
               onViewModeChange={setMapViewMode}
+              feedAd={regionAds?.feed ?? null}
             />
             <ReportStrip
               reports={filteredReports}
@@ -74,7 +86,11 @@ function HomeContent() {
             />
           </div>
           <div className="lg:col-span-1">
-            <HomeSidebar reports={filteredReports} />
+            <HomeSidebar
+              reports={filteredReports}
+              sidebarAd={regionAds?.sidebar ?? null}
+              regionName={region?.name}
+            />
           </div>
         </div>
       </div>

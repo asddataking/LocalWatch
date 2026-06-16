@@ -98,7 +98,7 @@ export default function AboutPage() {
             { icon: "✓", title: "Community Verified", text: "Reports earn trust through neighbor confirmations." },
             { icon: "👥", title: "No Login Required", text: "Submit anonymously anytime. Register to build trust over time." },
             { icon: "🛡️", title: "Moderator Reviewed", text: "High-abuse reports are flagged for admin review." },
-            { icon: "🇺🇸", title: "Not for Profit", text: "Built for communities, not surveillance or profit." },
+            { icon: "🏪", title: "Local Partners", text: "Regional businesses can sponsor awareness in their community." },
           ].map((card) => (
             <div key={card.title} className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
               <span className="text-2xl">{card.icon}</span>

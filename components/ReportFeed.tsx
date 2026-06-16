@@ -3,14 +3,23 @@
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import ReportCard from "./ReportCard";
 import SponsoredResource from "./SponsoredResource";
+import RegionAdSlot, { RegionAdContent } from "./RegionAdSlot";
 
 interface ReportFeedProps {
   reports: Doc<"reports">[];
   activeCategory: string;
   onSelectReport?: (id: Id<"reports">) => void;
+  feedAd?: RegionAdContent | null;
+  regionName?: string;
 }
 
-export default function ReportFeed({ reports, activeCategory, onSelectReport }: ReportFeedProps) {
+export default function ReportFeed({
+  reports,
+  activeCategory,
+  onSelectReport,
+  feedAd,
+  regionName,
+}: ReportFeedProps) {
   const filtered =
     activeCategory === "all"
       ? reports
@@ -45,7 +54,16 @@ export default function ReportFeed({ reports, activeCategory, onSelectReport }: 
           <div key={report._id} className="contents">
             {showAd && (
               <div className="col-span-1 md:col-span-2 my-2">
-                <SponsoredResource category={report.category} />
+                {feedAd ? (
+                  <RegionAdSlot
+                    ad={feedAd}
+                    regionName={regionName}
+                    placement="feed"
+                    compact
+                  />
+                ) : (
+                  <SponsoredResource category={report.category} />
+                )}
               </div>
             )}
             <ReportCard report={report} index={i} onSelect={onSelectReport} />

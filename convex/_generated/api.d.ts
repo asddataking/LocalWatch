@@ -9,8 +9,10 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as ads from "../ads.js";
 import type * as cleanup from "../cleanup.js";
 import type * as crons from "../crons.js";
+import type * as partners from "../partners.js";
 import type * as regions from "../regions.js";
 import type * as reports from "../reports.js";
 import type * as seed from "../seed.js";
@@ -24,8 +26,10 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  ads: typeof ads;
   cleanup: typeof cleanup;
   crons: typeof crons;
+  partners: typeof partners;
   regions: typeof regions;
   reports: typeof reports;
   seed: typeof seed;

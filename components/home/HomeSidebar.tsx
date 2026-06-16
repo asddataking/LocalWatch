@@ -4,9 +4,12 @@ import Link from "next/link";
 import { Doc } from "@/convex/_generated/dataModel";
 import { CATEGORY_ICONS } from "@/components/CategoryFilter";
 import { getTrendingCategories } from "@/lib/homeStats";
+import RegionAdSlot, { RegionAdContent } from "@/components/RegionAdSlot";
 
 interface HomeSidebarProps {
   reports: Doc<"reports">[];
+  sidebarAd?: RegionAdContent | null;
+  regionName?: string;
 }
 
 const WHY_ITEMS = [
@@ -27,7 +30,7 @@ const WHY_ITEMS = [
   },
 ] as const;
 
-export default function HomeSidebar({ reports }: HomeSidebarProps) {
+export default function HomeSidebar({ reports, sidebarAd, regionName }: HomeSidebarProps) {
   const trending = getTrendingCategories(reports);
 
   return (
@@ -73,6 +76,13 @@ export default function HomeSidebar({ reports }: HomeSidebarProps) {
           </ul>
         )}
       </div>
+
+      <RegionAdSlot
+        ad={sidebarAd ?? null}
+        regionName={regionName}
+        placement="sidebar"
+        compact
+      />
 
       {/* Why LocalWatch */}
       <div

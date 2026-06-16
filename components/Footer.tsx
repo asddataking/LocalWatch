@@ -57,6 +57,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/work-with-us" className="hover:text-white transition-colors no-underline">
+                  Work with Us
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="hover:text-white transition-colors no-underline">
                   About Us
                 </Link>
@@ -91,6 +96,11 @@ export default function Footer() {
               <li>
                 <Link href="#" className="hover:text-white transition-colors no-underline">
                   Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/work-with-us" className="hover:text-white transition-colors no-underline">
+                  Work with Us
                 </Link>
               </li>
               <li>

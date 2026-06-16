@@ -2,7 +2,7 @@ const TRUST_ITEMS = [
   { icon: "✓", label: "Community Verified" },
   { icon: "👥", label: "Multiple Witnesses" },
   { icon: "🛡️", label: "Moderator Reviewed" },
-  { icon: "💙", label: "Not for Profit" },
+  { icon: "🏪", label: "Local Partners" },
 ] as const;
 
 export default function TrustBar() {

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import CategoryFilter from "@/components/CategoryFilter";
 import ReportFeed from "@/components/ReportFeed";
+import RegionAdSlot, { RegionAdContent } from "@/components/RegionAdSlot";
 
 const ReportMap = dynamic(() => import("@/components/ReportMap"), {
   ssr: false,
@@ -35,6 +36,7 @@ interface MapWorkspaceProps {
   onSelectReport?: (id: Id<"reports">) => void;
   viewMode?: ViewMode;
   onViewModeChange?: (mode: ViewMode) => void;
+  feedAd?: RegionAdContent | null;
 }
 
 export default function MapWorkspace({
@@ -47,6 +49,7 @@ export default function MapWorkspace({
   onSelectReport,
   viewMode: controlledViewMode,
   onViewModeChange,
+  feedAd,
 }: MapWorkspaceProps) {
   const [internalViewMode, setInternalViewMode] = useState<ViewMode>("map");
   const viewMode = controlledViewMode ?? internalViewMode;
@@ -114,6 +117,8 @@ export default function MapWorkspace({
             reports={reports}
             activeCategory={activeCategory}
             onSelectReport={onSelectReport}
+            feedAd={feedAd}
+            regionName={region?.name}
           />
         </div>
       )}

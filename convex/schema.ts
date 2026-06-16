@@ -58,4 +58,36 @@ export default defineSchema({
     regionId: v.id("regions"),
     createdAt: v.number(),
   }).index("by_region", ["regionId"]),
+
+  regionAds: defineTable({
+    regionId: v.id("regions"),
+    placement: v.string(), // banner | sidebar | feed
+    sponsorName: v.string(),
+    title: v.string(),
+    description: v.string(),
+    ctaLabel: v.string(),
+    ctaUrl: v.optional(v.string()),
+    icon: v.optional(v.string()),
+    accentColor: v.optional(v.string()),
+    active: v.boolean(),
+    updatedAt: v.number(),
+  })
+    .index("by_region", ["regionId"])
+    .index("by_region_placement", ["regionId", "placement"]),
+
+  partnerInquiries: defineTable({
+    businessName: v.string(),
+    contactName: v.string(),
+    email: v.string(),
+    phone: v.optional(v.string()),
+    website: v.optional(v.string()),
+    regionId: v.optional(v.id("regions")),
+    interestType: v.string(), // advertising | partnership | other
+    placements: v.optional(v.array(v.string())),
+    message: v.string(),
+    status: v.string(), // new | contacted | closed
+    createdAt: v.number(),
+  })
+    .index("by_status", ["status"])
+    .index("by_created", ["createdAt"]),
 });
