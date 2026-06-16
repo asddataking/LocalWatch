@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
-import { ClerkProvider } from '@clerk/nextjs';
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
@@ -36,19 +35,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider afterSignOutUrl="/">
-      <html lang="en">
-        <head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        </head>
-        <body>
-          <ConvexClientProvider>
-            <Header />
-            <main>{children}</main>
-          </ConvexClientProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
+      <body>
+        <ConvexClientProvider>
+          <Header />
+          <main>{children}</main>
+        </ConvexClientProvider>
+      </body>
+    </html>
   );
 }
