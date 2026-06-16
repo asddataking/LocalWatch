@@ -1,15 +1,16 @@
 "use client";
 
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import ReportCard from "@/components/ReportCard";
 import { getLatestReports } from "@/lib/homeStats";
 
 interface ReportStripProps {
   reports: Doc<"reports">[];
   activeCategory: string;
+  onSelectReport?: (id: Id<"reports">) => void;
 }
 
-export default function ReportStrip({ reports, activeCategory }: ReportStripProps) {
+export default function ReportStrip({ reports, activeCategory, onSelectReport }: ReportStripProps) {
   const filtered =
     activeCategory === "all"
       ? reports
@@ -30,7 +31,12 @@ export default function ReportStrip({ reports, activeCategory }: ReportStripProp
       <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1">
         {latest.map((report, i) => (
           <div key={report._id} className="flex-shrink-0 w-72 md:w-80">
-            <ReportCard report={report} index={i} variant="compact" />
+            <ReportCard
+              report={report}
+              index={i}
+              variant="compact"
+              onSelect={onSelectReport}
+            />
           </div>
         ))}
       </div>

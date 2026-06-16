@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import CategoryFilter from "@/components/CategoryFilter";
 import ReportFeed from "@/components/ReportFeed";
 
@@ -31,6 +31,10 @@ interface MapWorkspaceProps {
   onCategoryChange: (category: string) => void;
   region: Doc<"regions"> | null | undefined;
   totalReports: number;
+  selectedReportId?: Id<"reports"> | null;
+  onSelectReport?: (id: Id<"reports">) => void;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
 }
 
 export default function MapWorkspace({
@@ -39,8 +43,18 @@ export default function MapWorkspace({
   onCategoryChange,
   region,
   totalReports,
+  selectedReportId,
+  onSelectReport,
+  viewMode: controlledViewMode,
+  onViewModeChange,
 }: MapWorkspaceProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("map");
+  const [internalViewMode, setInternalViewMode] = useState<ViewMode>("map");
+  const viewMode = controlledViewMode ?? internalViewMode;
+
+  function setViewMode(mode: ViewMode) {
+    if (onViewModeChange) onViewModeChange(mode);
+    else setInternalViewMode(mode);
+  }
 
   const filteredCount =
     activeCategory === "all"
@@ -49,7 +63,6 @@ export default function MapWorkspace({
 
   return (
     <section id="map" className="scroll-mt-20">
-      {/* Map | List toggle */}
       <div className="flex items-center justify-between mb-4">
         <h2
           className="text-xl font-bold"
@@ -76,7 +89,6 @@ export default function MapWorkspace({
         </div>
       </div>
 
-      {/* Sticky category filter */}
       <div
         className="sticky top-16 z-40 py-3 -mx-1 px-1 mb-4"
         style={{ background: "var(--off-white)" }}
@@ -84,9 +96,13 @@ export default function MapWorkspace({
         <CategoryFilter active={activeCategory} onChange={onCategoryChange} />
       </div>
 
-      {/* Map or List view */}
       {viewMode === "map" ? (
-        <ReportMap reports={reports} activeCategory={activeCategory} region={region} />
+        <ReportMap
+          reports={reports}
+          activeCategory={activeCategory}
+          region={region}
+          selectedReportId={selectedReportId}
+        />
       ) : (
         <div>
           <div className="flex items-center justify-end mb-3">
@@ -94,7 +110,11 @@ export default function MapWorkspace({
               {filteredCount} report{filteredCount !== 1 ? "s" : ""}
             </span>
           </div>
-          <ReportFeed reports={reports} activeCategory={activeCategory} />
+          <ReportFeed
+            reports={reports}
+            activeCategory={activeCategory}
+            onSelectReport={onSelectReport}
+          />
         </div>
       )}
     </section>

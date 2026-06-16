@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { Map as LeafletMap, LayerGroup } from "leaflet";
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { getStatusDisplay } from "@/app/utils/reportStatus";
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -54,12 +54,14 @@ interface ReportMapProps {
   reports: Doc<"reports">[];
   activeCategory: string;
   region?: Doc<"regions"> | null;
+  selectedReportId?: Id<"reports"> | null;
 }
 
-export default function ReportMap({ reports, activeCategory, region }: ReportMapProps) {
+export default function ReportMap({ reports, activeCategory, region, selectedReportId }: ReportMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<LeafletMap | null>(null);
   const clusterGroupRef = useRef<LayerGroup | null>(null);
+  const markerByIdRef = useRef<Map<string, { getLatLng: () => { lat: number; lng: number }; openPopup: () => void }>>(new Map());
 
   const filtered =
     activeCategory === "all"
@@ -124,6 +126,7 @@ export default function ReportMap({ reports, activeCategory, region }: ReportMap
       if (!clusterGroupRef.current) return;
 
       clusterGroupRef.current.clearLayers();
+      markerByIdRef.current.clear();
 
       filtered.forEach((report) => {
         const color = CATEGORY_COLORS[report.category] ?? "#0D1B3E";
@@ -158,10 +161,23 @@ export default function ReportMap({ reports, activeCategory, region }: ReportMap
         );
 
         clusterGroupRef.current?.addLayer(marker);
+        markerByIdRef.current.set(report._id, marker);
       });
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtered.length, activeCategory, JSON.stringify(filtered.map((r) => r._id))]);
+
+  useEffect(() => {
+    if (!selectedReportId || !mapInstanceRef.current) return;
+
+    const marker = markerByIdRef.current.get(selectedReportId);
+    if (!marker) return;
+
+    const map = mapInstanceRef.current;
+    const { lat, lng } = marker.getLatLng();
+    map.flyTo([lat, lng], 14, { duration: 0.8 });
+    window.setTimeout(() => marker.openPopup(), 400);
+  }, [selectedReportId]);
 
   return (
     <div className="map-container relative">

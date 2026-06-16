@@ -14,10 +14,14 @@ import ReportStrip from "@/components/home/ReportStrip";
 import MobileReportFab from "@/components/home/MobileReportFab";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { computeHomeStats } from "@/lib/homeStats";
+import { computeHomeStats, filterReportsByTown } from "@/lib/homeStats";
+import { Id } from "@/convex/_generated/dataModel";
 
 function HomeContent() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [activeTown, setActiveTown] = useState<string | null>(null);
+  const [selectedReportId, setSelectedReportId] = useState<Id<"reports"> | null>(null);
+  const [mapViewMode, setMapViewMode] = useState<"map" | "list">("map");
   const searchParams = useSearchParams();
   const currentRegionSlug = searchParams.get("region");
 
@@ -27,31 +31,50 @@ function HomeContent() {
   );
   const reports =
     useQuery(api.reports.getReportsByRegion, region ? { regionId: region._id } : "skip") ?? [];
+  const communityStats = useQuery(api.admin.getPublicCommunityStats);
 
-  const stats = computeHomeStats(reports);
+  const filteredReports = filterReportsByTown(reports, activeTown);
+  const stats = computeHomeStats(filteredReports);
+
+  function handleSelectReport(id: Id<"reports">) {
+    setSelectedReportId(id);
+    setMapViewMode("map");
+    document.getElementById("map")?.scrollIntoView({ behavior: "smooth" });
+  }
 
   return (
     <>
       <LocationDetector />
-      <HeroSection stats={stats} regionName={region?.name} />
+      <HeroSection stats={stats} communityStats={communityStats} regionName={region?.name} />
       <TrustBar />
-      <AreaChips currentRegionSlug={currentRegionSlug} />
+      <AreaChips
+        currentRegionSlug={currentRegionSlug}
+        activeTown={activeTown}
+        onTownChange={setActiveTown}
+      />
 
-      {/* Map-primary layout: 2/3 map + 1/3 sidebar on desktop */}
       <div className="max-w-6xl mx-auto px-4 py-6 md:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2 min-w-0">
             <MapWorkspace
-              reports={reports}
+              reports={filteredReports}
               activeCategory={activeCategory}
               onCategoryChange={setActiveCategory}
               region={region}
               totalReports={stats.totalReports}
+              selectedReportId={selectedReportId}
+              onSelectReport={handleSelectReport}
+              viewMode={mapViewMode}
+              onViewModeChange={setMapViewMode}
             />
-            <ReportStrip reports={reports} activeCategory={activeCategory} />
+            <ReportStrip
+              reports={filteredReports}
+              activeCategory={activeCategory}
+              onSelectReport={handleSelectReport}
+            />
           </div>
           <div className="lg:col-span-1">
-            <HomeSidebar reports={reports} />
+            <HomeSidebar reports={filteredReports} />
           </div>
         </div>
       </div>

@@ -55,3 +55,12 @@ export function getLatestReports(
     .sort((a, b) => b.createdAt - a.createdAt)
     .slice(0, limit);
 }
+
+export function filterReportsByTown(
+  reports: Doc<"reports">[],
+  town: string | null
+): Doc<"reports">[] {
+  if (!town) return reports;
+  const needle = town.toLowerCase();
+  return reports.filter((r) => r.locationText.toLowerCase().includes(needle));
+}

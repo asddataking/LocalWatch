@@ -2,13 +2,20 @@
 
 import Link from "next/link";
 import { HomeStats } from "@/lib/homeStats";
+import { siteConfig } from "@/lib/site";
+
+interface CommunityStats {
+  communityMembers: number;
+  activeToday: number;
+}
 
 interface HeroSectionProps {
   stats: HomeStats;
+  communityStats?: CommunityStats | null;
   regionName?: string;
 }
 
-export default function HeroSection({ stats, regionName }: HeroSectionProps) {
+export default function HeroSection({ stats, communityStats, regionName }: HeroSectionProps) {
   const headlineRegion = regionName ? `In ${regionName}` : "In Your Community";
 
   function scrollToMap() {
@@ -19,17 +26,14 @@ export default function HeroSection({ stats, regionName }: HeroSectionProps) {
     <section className="hero-section relative text-white overflow-hidden">
       {/* Background layers */}
       <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url('${siteConfig.ogImage}')` }}
+      />
+      <div
         className="absolute inset-0"
         style={{
           background: `
-            linear-gradient(135deg, rgba(8, 18, 40, 0.92) 0%, rgba(13, 27, 62, 0.85) 50%, rgba(26, 45, 90, 0.88) 100%),
-            repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 10px,
-              rgba(245, 166, 35, 0.03) 10px,
-              rgba(245, 166, 35, 0.03) 20px
-            )
+            linear-gradient(135deg, rgba(8, 18, 40, 0.88) 0%, rgba(13, 27, 62, 0.82) 50%, rgba(26, 45, 90, 0.85) 100%)
           `,
         }}
       />
@@ -71,6 +75,12 @@ export default function HeroSection({ stats, regionName }: HeroSectionProps) {
               <StatItem value={stats.verifiedCount} label="Verified" />
               {stats.reportsToday > 0 && (
                 <StatItem value={stats.reportsToday} label="Today" accent />
+              )}
+              {communityStats && communityStats.communityMembers > 0 && (
+                <StatItem value={communityStats.communityMembers} label="Community Members" />
+              )}
+              {communityStats && communityStats.activeToday > 0 && (
+                <StatItem value={communityStats.activeToday} label="Active Today" accent />
               )}
             </div>
 

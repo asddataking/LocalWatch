@@ -47,7 +47,7 @@ export default function Header() {
               Alerts
             </Link>
             <Link
-              href="#"
+              href="/about"
               className="text-sm font-semibold no-underline transition-colors hover:text-white"
               style={{ color: "rgba(255,255,255,0.8)" }}
             >
@@ -117,7 +117,7 @@ export default function Header() {
               📍 Alerts
             </Link>
             <Link
-              href="#"
+              href="/about"
               onClick={() => setMenuOpen(false)}
               className="text-sm font-semibold no-underline py-2"
               style={{ color: "rgba(255,255,255,0.85)" }}

@@ -34,6 +34,20 @@ export const siteConfig = {
     { name: "Flint Area", slug: "flint-area" },
     { name: "Lansing Area", slug: "lansing-area" },
   ],
+  regionTowns: {
+    "blue-water-area": ["Port Huron", "Marysville", "St. Clair", "Marine City", "Algonac"],
+    "metro-detroit": ["Detroit", "Royal Oak", "Dearborn", "Warren", "Livonia", "Taylor"],
+    "north-atlanta": ["Alpharetta", "Roswell", "Marietta", "Sandy Springs"],
+    "tampa-bay": ["Tampa", "St. Petersburg", "Clearwater", "Brandon"],
+    "grand-rapids-area": ["Grand Rapids", "Wyoming", "Kentwood", "Walker"],
+    "flint-area": ["Flint", "Burton", "Grand Blanc", "Fenton"],
+    "lansing-area": ["Lansing", "East Lansing", "Delta Township", "Okemos"],
+  } as Record<string, string[]>,
+  social: {
+    twitter: "https://twitter.com/LocalWatchHQ",
+    facebook: "https://facebook.com/LocalWatchHQ",
+    instagram: "https://instagram.com/LocalWatchHQ",
+  },
 } as const;
 
 export function absoluteUrl(path = ""): string {

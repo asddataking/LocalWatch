@@ -1,15 +1,16 @@
 "use client";
 
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import ReportCard from "./ReportCard";
 import SponsoredResource from "./SponsoredResource";
 
 interface ReportFeedProps {
   reports: Doc<"reports">[];
   activeCategory: string;
+  onSelectReport?: (id: Id<"reports">) => void;
 }
 
-export default function ReportFeed({ reports, activeCategory }: ReportFeedProps) {
+export default function ReportFeed({ reports, activeCategory, onSelectReport }: ReportFeedProps) {
   const filtered =
     activeCategory === "all"
       ? reports
@@ -47,7 +48,7 @@ export default function ReportFeed({ reports, activeCategory }: ReportFeedProps)
                 <SponsoredResource category={report.category} />
               </div>
             )}
-            <ReportCard report={report} index={i} />
+            <ReportCard report={report} index={i} onSelect={onSelectReport} />
           </div>
         );
       })}

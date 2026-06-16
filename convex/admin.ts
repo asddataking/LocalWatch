@@ -173,3 +173,21 @@ export const getActiveUsers = query({
     }));
   },
 });
+
+export const getPublicCommunityStats = query({
+  args: {},
+  handler: async (ctx) => {
+    const now = Date.now();
+    const dayAgo = now - DAY_MS;
+    const activeWindow = now - 15 * 60 * 1000;
+
+    const users = await ctx.db.query("users").collect();
+
+    return {
+      communityMembers: users.length,
+      registeredMembers: users.filter((u) => !!u.clerkId).length,
+      activeToday: users.filter((u) => (u.lastActiveAt ?? 0) >= dayAgo).length,
+      activeNow: users.filter((u) => (u.lastActiveAt ?? 0) >= activeWindow).length,
+    };
+  },
+});

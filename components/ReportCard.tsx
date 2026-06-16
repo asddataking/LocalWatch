@@ -59,12 +59,14 @@ interface ReportCardProps {
   report: Doc<"reports">;
   index?: number;
   variant?: "default" | "compact";
+  onSelect?: (id: Id<"reports">) => void;
 }
 
 export default function ReportCard({
   report,
   index = 0,
   variant = "default",
+  onSelect,
 }: ReportCardProps) {
   const interact = useMutation(api.reports.interactWithReport);
   const { user, ready } = useLocalWatchUser();
@@ -99,8 +101,10 @@ export default function ReportCard({
 
   if (variant === "compact") {
     return (
-      <div
-        className="report-card bg-white rounded-xl shadow-sm border overflow-hidden animate-fadein h-full flex flex-col"
+      <button
+        type="button"
+        onClick={() => onSelect?.(report._id)}
+        className="report-card bg-white rounded-xl shadow-sm border overflow-hidden animate-fadein h-full flex flex-col text-left w-full cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5"
         style={{
           borderColor: "var(--gray-200)",
           animationDelay: `${index * 60}ms`,
@@ -153,7 +157,7 @@ export default function ReportCard({
             </span>
           </div>
         </div>
-      </div>
+      </button>
     );
   }
 

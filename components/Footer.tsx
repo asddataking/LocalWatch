@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { siteConfig } from "@/lib/site";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -56,7 +57,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors no-underline">
+                <Link href="/about" className="hover:text-white transition-colors no-underline">
                   About Us
                 </Link>
               </li>
@@ -73,12 +74,12 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2 font-medium">
               <li>
-                <Link href="#" className="hover:text-white transition-colors no-underline">
+                <Link href="/about" className="hover:text-white transition-colors no-underline">
                   How It Works
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white transition-colors no-underline">
+                <Link href="/about" className="hover:text-white transition-colors no-underline">
                   Community Guidelines
                 </Link>
               </li>
@@ -109,17 +110,36 @@ export default function Footer() {
               Connect
             </h3>
             <div className="flex gap-3">
-              {["𝕏", "f", "in"].map((label) => (
-                <a
-                  key={label}
-                  href="#"
-                  className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold transition-colors hover:bg-white/20 no-underline"
-                  style={{ background: "rgba(255,255,255,0.1)", color: "white" }}
-                  aria-label={`Social link ${label}`}
-                >
-                  {label}
-                </a>
-              ))}
+              <a
+                href={siteConfig.social.twitter}
+                target="_blank"
+                rel="noreferrer"
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold transition-colors hover:bg-white/20 no-underline"
+                style={{ background: "rgba(255,255,255,0.1)", color: "white" }}
+                aria-label="LocalWatch on X"
+              >
+                𝕏
+              </a>
+              <a
+                href={siteConfig.social.facebook}
+                target="_blank"
+                rel="noreferrer"
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold transition-colors hover:bg-white/20 no-underline"
+                style={{ background: "rgba(255,255,255,0.1)", color: "white" }}
+                aria-label="LocalWatch on Facebook"
+              >
+                f
+              </a>
+              <a
+                href={siteConfig.social.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold transition-colors hover:bg-white/20 no-underline"
+                style={{ background: "rgba(255,255,255,0.1)", color: "white" }}
+                aria-label="LocalWatch on Instagram"
+              >
+                in
+              </a>
             </div>
           </div>
         </div>
