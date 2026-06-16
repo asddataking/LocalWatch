@@ -10,6 +10,7 @@ export const siteConfig = {
   ogImageAlt:
     "LocalWatch app preview showing a neighborhood map with real-time community safety reports for Metro Detroit.",
   twitterHandle: "@LocalWatchHQ",
+  googleAnalyticsId: "G-9MGV43PBK1",
   keywords: [
     "localwatch",
     "neighborhood watch",
