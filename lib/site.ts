@@ -8,7 +8,7 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://localwatchhq.com",
   ogImage: "/localwatch-social-share.jpg",
   ogImageAlt:
-    "LocalWatch app preview showing a neighborhood map with real-time community safety reports for Metro Detroit.",
+    "LocalWatch — Know what's happening around you. Community safety app with real-time reports for public safety, traffic, fire & EMS, lost pets, and weather.",
   twitterHandle: "@LocalWatchHQ",
   googleAnalyticsId: "G-9MGV43PBK1",
   keywords: [

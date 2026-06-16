@@ -9,7 +9,6 @@ import AdBanner from "@/components/AdBanner";
 import Footer from "@/components/Footer";
 import LocationDetector from "@/components/LocationDetector";
 import RegionDirectory from "@/components/RegionDirectory";
-import NewsletterCTA from "@/components/NewsletterCTA";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -141,9 +140,6 @@ function HomeContent() {
 
         {/* Middle Ad Banner */}
         <AdBanner />
-
-        {/* Newsletter CTA */}
-        <NewsletterCTA region={region || null} />
 
         {/* Feed */}
         <div>
