@@ -51,7 +51,10 @@ export const createReport = mutation({
     // Increment user total reports
     const user = await ctx.db.get(args.userId);
     if (user) {
-      await ctx.db.patch(args.userId, { totalReports: user.totalReports + 1 });
+      await ctx.db.patch(args.userId, {
+        totalReports: user.totalReports + 1,
+        lastActiveAt: Date.now(),
+      });
       
       // Update trust score logic
       if (user.totalReports >= 10 && user.trustScoreLevel === "New User") {
@@ -94,6 +97,8 @@ export const interactWithReport = mutation({
     await ctx.db.insert("interactions", {
       type, reportId, userId, createdAt: Date.now()
     });
+
+    await ctx.db.patch(userId, { lastActiveAt: Date.now() });
 
     const report = await ctx.db.get(reportId);
     if (!report) throw new Error("Report not found");

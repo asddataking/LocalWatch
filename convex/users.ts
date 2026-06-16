@@ -19,6 +19,7 @@ async function findByClerkId(ctx: DbCtx, clerkId: string) {
     .first();
 }
 
+
 async function createAnonymousUser(
   ctx: MutationCtx,
   fingerprintId: string
@@ -29,6 +30,7 @@ async function createAnonymousUser(
     trustScoreLevel: "New User",
     totalReports: 0,
     createdAt: Date.now(),
+    lastActiveAt: Date.now(),
   });
   const user = await ctx.db.get(userId);
   if (!user) throw new Error("Failed to create user");
@@ -50,6 +52,7 @@ export const ensureUser = mutation({
         await ctx.db.patch(byClerk._id, {
           displayName: displayName ?? byClerk.displayName,
           email: email ?? byClerk.email,
+          lastActiveAt: Date.now(),
         });
         return (await ctx.db.get(byClerk._id))!;
       }
@@ -64,6 +67,7 @@ export const ensureUser = mutation({
             byFingerprint.trustScoreLevel === "New User"
               ? "Community Member"
               : byFingerprint.trustScoreLevel,
+          lastActiveAt: Date.now(),
         });
         return (await ctx.db.get(byFingerprint._id))!;
       }
@@ -77,6 +81,7 @@ export const ensureUser = mutation({
         trustScoreLevel: "Community Member",
         totalReports: 0,
         createdAt: Date.now(),
+        lastActiveAt: Date.now(),
       });
       const user = await ctx.db.get(userId);
       if (!user) throw new Error("Failed to create user");
@@ -84,7 +89,10 @@ export const ensureUser = mutation({
     }
 
     const existing = await findByFingerprint(ctx, fingerprintId);
-    if (existing) return existing;
+    if (existing) {
+      await ctx.db.patch(existing._id, { lastActiveAt: Date.now() });
+      return (await ctx.db.get(existing._id))!;
+    }
     return await createAnonymousUser(ctx, fingerprintId);
   },
 });

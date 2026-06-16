@@ -20,9 +20,11 @@ export default defineSchema({
     trustScoreLevel: v.string(), // 'New User', 'Community Member', 'Community Spotter', 'Trusted Reporter', 'Verified Contributor'
     totalReports: v.number(),
     createdAt: v.number(),
+    lastActiveAt: v.optional(v.number()),
   })
     .index("by_fingerprint", ["fingerprintId"])
-    .index("by_clerk", ["clerkId"]),
+    .index("by_clerk", ["clerkId"])
+    .index("by_last_active", ["lastActiveAt"]),
 
   reports: defineTable({
     regionId: v.optional(v.id("regions")),
