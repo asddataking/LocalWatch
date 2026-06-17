@@ -20,22 +20,22 @@ export default function AreaChips({
       : [];
 
   return (
-    <section className="max-w-6xl mx-auto px-4 py-6 space-y-4">
+    <section className="max-w-6xl mx-auto px-4 py-4 md:py-6 space-y-4 animate-fadein">
       <div>
         <h2
-          className="text-sm font-bold uppercase tracking-widest mb-3"
+          className="text-xs md:text-sm font-bold uppercase tracking-widest mb-3"
           style={{ color: "var(--gray-500)" }}
         >
           Browse Your Area
         </h2>
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 snap-scroll-x">
           {siteConfig.regions.map((region) => {
             const isActive = currentRegionSlug === region.slug;
             return (
               <Link
                 key={region.slug}
                 href={`/?region=${region.slug}`}
-                className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-150 hover:scale-105 no-underline whitespace-nowrap"
+                className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200 active:scale-95 no-underline whitespace-nowrap"
                 style={{
                   background: isActive ? "var(--navy)" : "var(--white)",
                   color: isActive ? "white" : "var(--navy)",
@@ -58,7 +58,7 @@ export default function AreaChips({
           >
             Neighborhoods
           </h3>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 snap-scroll-x">
             <button
               type="button"
               onClick={() => onTownChange(null)}
@@ -78,7 +78,7 @@ export default function AreaChips({
                   key={town}
                   type="button"
                   onClick={() => onTownChange(isActive ? null : town)}
-                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold border cursor-pointer transition-all hover:scale-105"
+                  className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold border cursor-pointer transition-all active:scale-95"
                   style={{
                     background: isActive ? "var(--navy)" : "white",
                     color: isActive ? "white" : "var(--navy)",

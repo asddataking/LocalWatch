@@ -10,11 +10,11 @@ export default function Header() {
 
   return (
     <header
-      style={{ background: "var(--navy)" }}
-      className="sticky top-0 z-50 shadow-lg"
+      style={{ background: "var(--navy)", paddingTop: "var(--safe-top)" }}
+      className="sticky top-0 z-50 shadow-lg glass-header"
     >
       <div className="max-w-6xl mx-auto px-4 py-0">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-14 md:h-16">
           <Link href="/" className="flex items-center gap-3 group no-underline">
             <div
               className="w-10 h-10 rounded-lg flex items-center justify-center text-xl font-black shadow-inner flex-shrink-0"
@@ -98,20 +98,23 @@ export default function Header() {
           </nav>
 
           <button
-            className="md:hidden text-white text-2xl p-2 rounded focus:outline-none"
+            className="md:hidden text-white text-2xl p-2 rounded-lg focus:outline-none transition-transform active:scale-90"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={menuOpen}
           >
-            {menuOpen ? "✕" : "☰"}
+            <span className={`inline-block transition-transform duration-200 ${menuOpen ? "rotate-90" : ""}`}>
+              {menuOpen ? "✕" : "☰"}
+            </span>
           </button>
         </div>
 
         {menuOpen && (
-          <div className="md:hidden pb-4 flex flex-col gap-3 border-t border-white/10 pt-3">
+          <div className="md:hidden pb-4 flex flex-col gap-1 border-t border-white/10 pt-2 animate-slide-down">
             <Link
               href="/#map"
               onClick={() => setMenuOpen(false)}
-              className="text-sm font-semibold no-underline py-2"
+              className="text-sm font-semibold no-underline py-3 px-2 rounded-lg transition-colors active:bg-white/10"
               style={{ color: "rgba(255,255,255,0.85)" }}
             >
               📍 Alerts
@@ -119,7 +122,7 @@ export default function Header() {
             <Link
               href="/about"
               onClick={() => setMenuOpen(false)}
-              className="text-sm font-semibold no-underline py-2"
+              className="text-sm font-semibold no-underline py-3 px-2 rounded-lg transition-colors active:bg-white/10"
               style={{ color: "rgba(255,255,255,0.85)" }}
             >
               About
@@ -159,7 +162,7 @@ export default function Header() {
             <Link
               href="/submit"
               onClick={() => setMenuOpen(false)}
-              className="text-center px-5 py-3 rounded-lg text-sm font-bold"
+              className="text-center px-5 py-3 rounded-xl text-sm font-bold mt-1 transition-transform active:scale-[0.98]"
               style={{
                 background: "var(--red)",
                 color: "var(--white)",

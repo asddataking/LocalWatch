@@ -11,8 +11,8 @@ export default function TrustBar() {
       className="border-b"
       style={{ background: "var(--white)", borderColor: "var(--gray-200)" }}
     >
-      <div className="max-w-6xl mx-auto px-4 py-3">
-        <div className="flex gap-4 md:gap-8 overflow-x-auto no-scrollbar">
+      <div className="max-w-6xl mx-auto px-4 py-2.5 md:py-3">
+        <div className="flex gap-4 md:gap-8 overflow-x-auto no-scrollbar snap-scroll-x animate-fadein">
           {TRUST_ITEMS.map((item) => (
             <div
               key={item.label}

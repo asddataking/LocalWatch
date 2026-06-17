@@ -11,7 +11,6 @@ import AreaChips from "@/components/home/AreaChips";
 import MapWorkspace from "@/components/home/MapWorkspace";
 import HomeSidebar from "@/components/home/HomeSidebar";
 import ReportStrip from "@/components/home/ReportStrip";
-import MobileReportFab from "@/components/home/MobileReportFab";
 import RegionAdSlot from "@/components/RegionAdSlot";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -96,7 +95,6 @@ function HomeContent() {
       </div>
 
       <Footer />
-      <MobileReportFab />
     </>
   );
 }

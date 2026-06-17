@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import Header from "@/components/Header";
+import MobileBottomNav from "@/components/home/MobileBottomNav";
 import JsonLd from "@/components/JsonLd";
 import { siteConfig } from "@/lib/site";
 
@@ -64,6 +65,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#0D1B3E",
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -92,7 +100,8 @@ export default function RootLayout({
         <ClerkProvider afterSignOutUrl="/">
           <ConvexClientProvider>
             <Header />
-            <main>{children}</main>
+            <main className="mobile-page-pad">{children}</main>
+            <MobileBottomNav />
           </ConvexClientProvider>
           <Analytics />
         </ClerkProvider>

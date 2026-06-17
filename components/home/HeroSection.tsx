@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { HomeStats } from "@/lib/homeStats";
 import { siteConfig } from "@/lib/site";
+import { useCountUp } from "@/hooks/useCountUp";
 
 interface CommunityStats {
   communityMembers: number;
@@ -45,31 +46,31 @@ export default function HeroSection({ stats, communityStats, regionName }: HeroS
         }}
       />
 
-      <div className="relative max-w-6xl mx-auto px-4 py-12 md:py-16">
-        <div className="grid md:grid-cols-5 gap-8 items-start">
+      <div className="relative max-w-6xl mx-auto px-4 py-8 md:py-16">
+        <div className="grid md:grid-cols-5 gap-6 md:gap-8 items-start">
           <div className="md:col-span-3">
             <span
-              className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4"
+              className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-4 animate-fadein"
               style={{ background: "var(--red)", color: "white" }}
             >
               🇺🇸 Free Community Tool
             </span>
 
             <h1
-              className="text-4xl md:text-5xl font-black mb-4 leading-tight"
+              className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 leading-tight animate-fadein stagger-1"
               style={{ fontFamily: "Merriweather, serif" }}
             >
               Know What&apos;s Happening{" "}
               <span style={{ color: "var(--gold)" }}>{headlineRegion}</span>
             </h1>
 
-            <p className="text-lg md:text-xl mb-8 opacity-90 leading-relaxed max-w-xl">
+            <p className="text-base md:text-xl mb-6 md:mb-8 opacity-90 leading-relaxed max-w-xl animate-fadein stagger-2">
               Real-time local awareness powered by neighbors like you. Report what you see,
               confirm what others share — no login required.
             </p>
 
             {/* Stats bar */}
-            <div className="flex flex-wrap gap-6 md:gap-10 mb-8">
+            <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-4 sm:gap-6 md:gap-10 mb-6 md:mb-8 animate-fadein stagger-3">
               <StatItem value={stats.totalReports} label="Total Reports" />
               <StatItem value={stats.uniqueLocations} label="Locations" />
               <StatItem value={stats.verifiedCount} label="Verified" />
@@ -84,11 +85,11 @@ export default function HeroSection({ stats, communityStats, regionName }: HeroS
               )}
             </div>
 
-            {/* Dual CTAs */}
-            <div className="flex flex-wrap gap-4">
+            {/* Dual CTAs — hidden on mobile (bottom nav handles report) */}
+            <div className="hidden md:flex flex-wrap gap-4 animate-fadein stagger-4">
               <Link
                 href="/submit"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-bold transition-all hover:scale-105 active:scale-95 shadow-lg no-underline"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-lg font-bold transition-all hover:scale-105 active:scale-95 shadow-lg no-underline"
                 style={{ background: "var(--red)", color: "white" }}
               >
                 + Report Something
@@ -96,7 +97,7 @@ export default function HeroSection({ stats, communityStats, regionName }: HeroS
               <button
                 type="button"
                 onClick={scrollToMap}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-lg font-bold transition-all hover:scale-105 active:scale-95 border-2 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-lg font-bold transition-all hover:scale-105 active:scale-95 border-2 cursor-pointer"
                 style={{
                   borderColor: "var(--gold)",
                   color: "var(--gold)",
@@ -106,12 +107,26 @@ export default function HeroSection({ stats, communityStats, regionName }: HeroS
                 View Map
               </button>
             </div>
+
+            {/* Mobile-only quick action */}
+            <button
+              type="button"
+              onClick={scrollToMap}
+              className="md:hidden w-full py-3.5 rounded-xl text-base font-bold border-2 cursor-pointer transition-all active:scale-[0.98] animate-fadein stagger-4"
+              style={{
+                borderColor: "var(--gold)",
+                color: "var(--gold)",
+                background: "rgba(245, 166, 35, 0.1)",
+              }}
+            >
+              🗺️ View Map & Reports
+            </button>
           </div>
 
           {/* Scanner alert education card */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 animate-fadein stagger-5">
             <div
-              className="rounded-xl p-5 border"
+              className="rounded-xl p-4 md:p-5 border"
               style={{
                 background: "rgba(255,255,255,0.08)",
                 borderColor: "rgba(245, 166, 35, 0.35)",
@@ -157,15 +172,19 @@ function StatItem({
   label: string;
   accent?: boolean;
 }) {
+  const display = useCountUp(value);
+
   return (
     <div>
       <div
-        className="text-3xl font-black tabular-nums"
+        className="text-2xl sm:text-3xl font-black tabular-nums"
         style={{ color: accent ? "var(--red-light)" : "var(--gold)" }}
       >
-        {value}
+        {display}
       </div>
-      <div className="text-xs opacity-70 uppercase tracking-wide">{label}</div>
+      <div className="text-[10px] sm:text-xs opacity-70 uppercase tracking-wide leading-tight">
+        {label}
+      </div>
     </div>
   );
 }

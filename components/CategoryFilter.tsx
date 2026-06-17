@@ -34,14 +34,14 @@ interface CategoryFilterProps {
 
 export default function CategoryFilter({ active, onChange }: CategoryFilterProps) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar snap-scroll-x">
       {CATEGORIES.map((cat) => {
         const isActive = active === cat.value;
         return (
           <button
             key={cat.value}
             onClick={() => onChange(cat.value)}
-            className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-150 hover:scale-105 active:scale-95 whitespace-nowrap"
+            className="flex-shrink-0 px-3.5 md:px-4 py-2 rounded-full text-xs md:text-sm font-semibold border-2 transition-all duration-200 active:scale-95 whitespace-nowrap"
             style={{
               background: isActive ? cat.color : "transparent",
               color: isActive ? "#fff" : cat.color,
